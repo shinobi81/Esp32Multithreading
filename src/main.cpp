@@ -27,7 +27,7 @@ const unsigned long displayTaskInterval = 2000;
 TaskHandle_t displayTaskHandle = NULL;
 
 // Flags and variables for button handling
-bool turnOff = false;
+bool turnOff = true;
 std::atomic<bool> buttonPressed{false};
 const unsigned long DEBOUNCE_DELAY = 50;
 volatile unsigned long lastPressedTime = 0;
@@ -52,7 +52,6 @@ void ARDUINO_ISR_ATTR handleButtonPress()
 // Handle button press work outside ISR
 void handleButtonAction()
 {
-  turnOff = !turnOff;
   if (turnOff)
   {
     Serial.println(F("Suspending tasks and turning off display."));
@@ -67,6 +66,7 @@ void handleButtonAction()
     vTaskResume(displayTaskHandle);
     vTaskResume(dhtTaskHandle);
   }
+  turnOff = !turnOff;
 }
 
 void displayTemperatureAndHumidity(void *pvParameters)
